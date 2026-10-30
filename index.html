@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101018">
+<title>TikTok Followers 2</title>
+<style>
+:root{--bg:#101018;--panel:#1b1b27;--muted:#a7a7b7;--pink:#ff4fa3;--cyan:#42d9e8;--white:#f7f7fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font:15px system-ui,Arial}
+header{padding:24px 18px 18px;background:linear-gradient(135deg,#29203a,#142a36);border-bottom:1px solid #343447}
+h1{font-size:23px;margin:0 0 5px}header p{color:#d1cede;margin:0;font-size:13px}
+main{max-width:760px;margin:auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:var(--panel);border:1px solid #303044;border-radius:16px;padding:15px;margin-bottom:12px}
+.stat{font-size:27px;font-weight:750;margin-top:5px}.muted{color:var(--muted);font-size:13px}
+label{display:block;color:#d8d8e4;font-size:13px;margin:10px 0 5px}
+input,textarea,select{width:100%;background:#11111a;color:white;border:1px solid #414156;border-radius:10px;padding:11px;font:inherit}
+textarea{min-height:78px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 14px;background:linear-gradient(90deg,var(--pink),#9c67ff);color:white;font-weight:700;margin-top:10px}
+button.secondary{background:#333348} .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+h2{font-size:17px;margin:0 0 10px}.task{padding:10px 0;border-bottom:1px solid #333344}.task:last-child{border:0}
+small{color:var(--muted)} .notice{border-left:3px solid var(--cyan);padding:10px 12px;background:#17262c;border-radius:8px;color:#d8faff;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:16px}
+</style></head>
+<body>
+<header><h1>✨ TikTok Followers 2</h1><p>Organic Creator Growth Planner · Independent, unofficial tool</p></header>
+<main>
+<div class="notice">Grow through original content and real viewers. This app does not generate followers, automate likes, follow/unfollow, or access your TikTok account.</div>
+<div class="grid" style="margin-top:14px">
+ <section class="card"><div class="muted">Followers (manual)</div><div class="stat" id="followers">0</div><small>Update from your own profile</small></section>
+ <section class="card"><div class="muted">Videos planned</div><div class="stat" id="planned">0</div><small>Saved content ideas</small></section>
+</div>
+<section class="card">
+<h2>📈 Profile progress</h2>
+<label for="count">Current follower count</label><input id="count" type="number" min="0" inputmode="numeric" placeholder="Enter current count">
+<label for="goal">Personal milestone goal</label><input id="goal" type="number" min="1" inputmode="numeric" placeholder="e.g. 100">
+<button onclick="saveStats()">Save progress</button>
+<p class="muted" id="progressText">Your progress stays on this device.</p>
+</section>
+<section class="card">
+<h2>💡 Add a content idea</h2>
+<label for="idea">Video idea / topic</label><textarea id="idea" placeholder="Example: 3 quick tips for beginners"></textarea>
+<label for="date">Planned date</label><input id="date" type="date">
+<label for="format">Format</label><select id="format"><option>How-to / tutorial</option><option>Storytime</option><option>Behind the scenes</option><option>Q&A</option><option>Educational</option><option>Comedy / skit</option></select>
+<button onclick="addIdea()">Save idea</button>
+<div id="ideas" style="margin-top:10px"></div>
+</section>
+<section class="card">
+<h2>✅ Organic growth checklist</h2>
+<div class="task"><label><input type="checkbox" class="check"> Choose one clear topic for the video</label></div>
+<div class="task"><label><input type="checkbox" class="check"> Start with an interesting first 2 seconds</label></div>
+<div class="task"><label><input type="checkbox" class="check"> Use your own footage, voice, or original edits</label></div>
+<div class="task"><label><input type="checkbox" class="check"> Add readable captions and relevant hashtags</label></div>
+<div class="task"><label><input type="checkbox" class="check"> Reply respectfully to genuine comments</label></div>
+<div class="task"><label><input type="checkbox" class="check"> Review watch time and audience response</label></div>
+</section>
+<section class="card">
+<h2>🛡️ Safety</h2>
+<p class="muted">Never share your password, verification code, recovery key, or private account information with follower services. Avoid paid follower schemes and engagement exchanges. Use TikTok's official settings and analytics where available.</p>
+<button class="secondary" onclick="exportData()">Export my planner data</button>
+<button class="secondary" onclick="clearData()">Clear local data</button>
+</section>
+</main>
+<footer>Not affiliated with, endorsed by, or sponsored by TikTok. Data is stored locally on this device.</footer>
+<script>
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let stats=get('stats',{count:0,goal:100}), ideas=get('ideas',[]);
+function render(){
+ document.getElementById('followers').textContent=stats.count;
+ document.getElementById('planned').textContent=ideas.length;
+ document.getElementById('count').value=stats.count||'';
+ document.getElementById('goal').value=stats.goal||'';
+ document.getElementById('progressText').textContent=`Milestone: ${stats.count} / ${stats.goal} (${stats.goal?Math.min(100,Math.round(stats.count/stats.goal*100)):0}%)`;
+ document.getElementById('ideas').innerHTML=ideas.length?ideas.map((x,i)=>`<div class="task"><b>${escapeHtml(x.title)}</b><br><small>${escapeHtml(x.date||'No date')} · ${escapeHtml(x.format)}</small><br><button class="secondary" onclick="removeIdea(${i})">Remove</button></div>`).join(''):'<p class="muted">No ideas saved yet.</p>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function saveStats(){stats={count:Math.max(0,Number(document.getElementById('count').value)||0),goal:Math.max(1,Number(document.getElementById('goal').value)||100)};set('stats',stats);render();}
+function addIdea(){let title=document.getElementById('idea').value.trim();if(!title){alert('Please enter an idea.');return;}ideas.unshift({title,date:document.getElementById('date').value,format:document.getElementById('format').value});set('ideas',ideas);document.getElementById('idea').value='';render();}
+function removeIdea(i){ideas.splice(i,1);set('ideas',ideas);render();}
+function exportData(){let blob=new Blob([JSON.stringify({stats,ideas},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='creator-planner-data.json';a.click();URL.revokeObjectURL(a.href);}
+function clearData(){if(confirm('Clear all planner data on this device?')){localStorage.clear();stats={count:0,goal:100};ideas=[];render();}}
+render();
+</script></body></html>
